@@ -61,22 +61,18 @@ public String toString() {
 
 
     @Override
-    public void reproducir(String titulo) throws ContenidoNoDisponibleException {
-       
-       
-            for (Serie jue : series) {
-                if(jue.getTitulo().equals(titulo)){
-                     if (jue.getDuracion() <= 0) {
-            throw new ContenidoNoDisponibleException("El juego  " + titulo + " no está disponible para reproducir");
-                     }else{
-                      System.out.println("Reproduciendo: " + titulo);
-
-                     }
-
-                }
+public void reproducir(String titulo, Usuario usuario, RegistroReproducciones registro) {
+    for (Serie se : series) {
+        if (se.getTitulo().equals(titulo)) {
+            if (se.getDuracion() <= 0) {
+                throw new ContenidoNoDisponibleException("El juego no está disponible");
+            } else {
+                System.out.println("Reproduciendo: " + titulo);
+                registro.registrarReproduccion(usuario, se);
             }
-        
+        }
     }
+}
     
 
 

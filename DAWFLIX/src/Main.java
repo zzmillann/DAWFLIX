@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+
 import javax.swing.JOptionPane;
 
 
@@ -5,10 +9,38 @@ public class Main {
 
     public void main() {
 
+
+        ArrayList<Usuario> usuarios = new ArrayList<>();
         Usuario gestorusuario = new Usuario("aaaaaaaaa", "aaaaaaaa", null );
+         gestorusuario.setUsuarios(usuarios);
         Juego gestorjuego = new Juego(null, null, 0, null, null, false);
         Serie gestorserie = new Serie(null, null, 0, null, 0, 0);
         Pelicula gestorpelicula = new Pelicula(null, null, 0, null, null, 0);
+        RegistroReproducciones registro = new RegistroReproducciones();
+        Map<Usuario, Map<Contenido, Integer>> reproducciones;
+       try {
+            gestorusuario.cargarUsuariosDesdeArchivo(usuarios, "usuarios.txt");
+        } catch (IOException e) {
+            System.out.println("Error al cargar usuarios: " + e.getMessage());
+        }
+
+
+        gestorusuario.crearUsuario("Alejandro", "alex@email.com" , null);
+gestorusuario.crearUsuario("Lucía", "lucia@example.com", new Suscripcion("Premium", 9.99));
+gestorusuario.crearUsuario("Carlos", "carlos23@gmail.com", new Suscripcion("Básica", 4.99));
+gestorusuario.crearUsuario("Marta", "marta.1990@hotmail.com", new Suscripcion("Estudiante", 2.99));
+gestorusuario.crearUsuario("Javier", "javi.dev@outlook.com", new Suscripcion("Familiar", 12.99));
+gestorusuario.crearUsuario("Sofía", "sofia_love@correo.com", new Suscripcion("Premium", 9.99));
+
+
+gestorjuego.crearJuego("gta 5", "es violento", 120, "accion", "play 4 y pc", true);
+gestorjuego.crearJuego("The Witcher 3", "RPG de mundo abierto con historia profunda", 150, "RPG", "PC, PS4, Xbox One", false);
+gestorjuego.crearJuego("FIFA 23", "Simulador de fútbol con multijugador", 90, "Deportes", "PC, PS5, Xbox Series", true);
+gestorjuego.crearJuego("Minecraft", "Juego de construcción y exploración", 200, "Sandbox", "PC, Consolas, Móvil", true);
+gestorjuego.crearJuego("Celeste", "Plataformas con gran dificultad y buena narrativa", 8, "Plataformas", "PC, Switch, PS4", false);
+gestorjuego.crearJuego("Call of Duty: Modern Warfare", "Shooter en primera persona con multijugador", 100, "Shooter", "PC, PS4, Xbox One", true);
+
+
 
 
 
@@ -21,7 +53,9 @@ public class Main {
                     "\n2) Gestionar Juegos" +
                     "\n3) Gestionar Series" +
                     "\n4) Gestionar Peliculas" +
-                    "\n5) SALIR");
+                    "\n5) SALIR" +
+                    "\n6) Reproducir música");
+;
 
             if (dialogo1 == null) break;
             opcionPrincipal = Integer.parseInt(dialogo1);
@@ -36,7 +70,11 @@ public class Main {
                                 "\n2) Eliminar Usuario" +
                                 "\n3) Ver todos los usuarios" +
                                 "\n4) Ver Info de usuario especifico" +
-                                "\n5) Volver");
+                                "\n5) Añadir a favoritos" +
+                                "\n6) Eliminar de favoritos" +
+                                "\n7) Añadir a estoy viendo" +
+                                "\n8) Eliminar de estoy viendo" +
+                                "\n9) Volver");
 
                         if (dialogo2 == null) break;
                         
@@ -66,10 +104,25 @@ public class Main {
                             gestorusuario.verInfo(emailusu3);
                                 break;
                             case 5:
+                            String contenidos1 = JOptionPane.showInputDialog("Nombre de pelicula, serie o juego que quieras añadir a tu lista de favoritos");
+                            gestorusuario.agreagarFavorito(contenidos1);
                             break;
-                            
+                            case 6:
+                            String contenidos2 = JOptionPane.showInputDialog("Nombre de pelicula, serie o juego que quieras eliminar a tu lista de favoritos");
+                            gestorusuario.eliminarFavorito(contenidos2);
+                            break;   
+                            case 7:
+                            String contenidos3 = JOptionPane.showInputDialog("Nombre de pelicula, serie o juego que quieras agregar a tu lista de estoy viendo");
+                            gestorusuario.agregarEstoyViendo(contenidos3);
+                            break;
+                            case 8:
+                            String contenidos4 = JOptionPane.showInputDialog("Nombre de pelicula, serie o juego que quieras eliminar de tu lista de estoy viendo");
+                            gestorusuario.elimianrEstoyViendo(contenidos4);
+                            break; 
+                            case 9:
+                                break;
                         }
-                    } while (opcionUsuarios != 5);
+                    } while (opcionUsuarios != 9);
                     break;
 
                 case 2: // Contenidos
@@ -133,7 +186,7 @@ public class Main {
                             case 8:
                                 try {    
                                         String titulo7 = JOptionPane.showInputDialog("Título del juego");
-                                         gestorjuego.reproducir(titulo7);                  // puede lanzar ContenidoNoDisponibleException
+                                        gestorjuego.reproducir(titulo7, gestorusuario, registro);            // puede lanzar ContenidoNoDisponibleException
                                     } catch (ContenidoNoDisponibleException e) {
                                          System.out.println("No se puede reproducir: " + e.getMessage());
                                     }
@@ -195,7 +248,7 @@ public class Main {
                             case 6:
                                 try {    
                                         String titulo7 = JOptionPane.showInputDialog("Título de la Serie");
-                                        gestorserie.reproducir(titulo7);                 // puede lanzar ContenidoNoDisponibleException
+                                        gestorserie.reproducir(titulo7, gestorusuario, registro);                   // puede lanzar ContenidoNoDisponibleException
                                     } catch (ContenidoNoDisponibleException e) {
                                          System.out.println("No se puede reproducir: " + e.getMessage());
                                     }
@@ -257,7 +310,7 @@ public class Main {
                             case 6:
                                 try {    
                                         String titulo7 = JOptionPane.showInputDialog("Título del juego");
-                                         gestorpelicula.reproducir(titulo7);                  // puede lanzar ContenidoNoDisponibleException
+                                         gestorpelicula.reproducir(titulo7, gestorusuario, registro);      
                                     } catch (ContenidoNoDisponibleException e) {
                                          System.out.println("No se puede reproducir: " + e.getMessage());
                                     }
@@ -269,9 +322,20 @@ public class Main {
                     } while (opcionpeliculas != 7);
                     break;
 
-                case 5:
-                    JOptionPane.showMessageDialog(null, "Saliendo del programa...");
-                    break;
+                    case 5:
+                         try {
+                             gestorusuario.guardarUsuariosEnArchivo(usuarios, "usuarios.txt");
+                              JOptionPane.showMessageDialog(null, "Usuarios guardados en 'usuarios.txt'");
+                             } catch (IOException e) {
+                               JOptionPane.showMessageDialog(null, "Error al guardar usuarios: " + e.getMessage());
+                            }
+
+                                JOptionPane.showMessageDialog(null, "Saliendo del programa...");
+                             break;
+                    case 6:
+                              ReproductorMusica rep = new ReproductorMusica();
+                              rep.reproducirWav("C:\\Users\\Alejandro\\Desktop\\DAW\\DAWFLIX\\DAWFLIX\\src\\cancion1.wav");
+                               break;
 
                 default:
                     JOptionPane.showMessageDialog(null, "Opción no válida. Intente nuevamente.");

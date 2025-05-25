@@ -170,16 +170,8 @@ public ArrayList<Contenido> recomendarPorGeneroYValoracion(Contenido referencia,
 
 
 
-/*Contenido referencia = new Pelicula("Matrix", "Acción sci-fi", 120, "Acción", "Wachowski", 1999);
-referencia.valorar(5);
-referencia.valorar(4);
 
-ArrayList<Contenido> recomendaciones = usuario.recomendarPorGeneroYValoracion(referencia, catalogo);
 
-System.out.println("🎯 Recomendaciones similares a: " + referencia.getTitulo());
-for (Contenido c : recomendaciones) {
-    System.out.printf("• %s (%.2f estrellas)%n", c.getTitulo(), c.getValoracionMedia());
-} */
 
 
 }

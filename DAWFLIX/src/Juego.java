@@ -108,23 +108,18 @@ public class Juego extends Contenido implements InterfazReproducir, Comparable<J
 
 
     @Override
-    public void reproducir(String titulo) throws ContenidoNoDisponibleException {
-       
-       
-            for (Juego jue : juegos) {
-                if(jue.getTitulo().equals(titulo)){
-                     if (jue.getDuracion() <= 0) {
-            throw new ContenidoNoDisponibleException("El juego  " + titulo + " no está disponible para reproducir");
-                     }else{
-                      System.out.println("Reproduciendo: " + titulo);
-
-                     }
-
-                }
+public void reproducir(String titulo, Usuario usuario, RegistroReproducciones registro) {
+    for (Juego jue : juegos) {
+        if (jue.getTitulo().equals(titulo)) {
+            if (jue.getDuracion() <= 0) {
+                throw new ContenidoNoDisponibleException("El juego no está disponible");
+            } else {
+                System.out.println("Reproduciendo: " + titulo);
+                registro.registrarReproduccion(usuario, jue);
             }
-        
+        }
     }
-    
+}
 
     
   
@@ -191,7 +186,7 @@ for (Juego jueg : juegos) {
 public void agregarComentarioJuego(String titulo, String texto) {
     for (Juego jueg : juegos) {
         if (jueg.getTitulo().equals(titulo)) {
-            jueg.agregarComentario(texto); // ⬅️ se lo agregas al juego
+            jueg.agregarComentario(texto); 
             break;
         }
     }
@@ -233,11 +228,3 @@ public int compareTo(Juego jueg) {
 
 }
 
-/*try {
-    usuario.agreagarFavorito(contenido); // puede lanzar IllegalArgumentException
-    contenido.reproducir(); // puede lanzar ContenidoNoDisponibleException
-} catch (IllegalArgumentException e) {
-    System.out.println("Error: " + e.getMessage());
-} catch (ContenidoNoDisponibleException e) {
-    System.out.println("No se puede reproducir: " + e.getMessage());
-} */

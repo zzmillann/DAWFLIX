@@ -1,13 +1,21 @@
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Usuario {
     
 private String nombre;
 private String email;
 Suscripcion suscripcion;
-private ArrayList<Contenido> favoritos;
-private ArrayList<Contenido> estoyViendo;
+private Set<String> favoritos ;
+private Set<String> estoyViendo ;
 ArrayList<Usuario> usuarios;
 
 
@@ -70,8 +78,8 @@ public Usuario(String nombre, String email, Suscripcion suscripcion) {
     this.nombre = nombre;
     this.email = email;
     this.suscripcion = suscripcion;
-    this.favoritos = new ArrayList<>();
-    this.estoyViendo = new ArrayList<>();
+    this.favoritos = new HashSet<>();
+    this.estoyViendo = new HashSet<>();
     this.usuarios = new ArrayList<>();
 }
 
@@ -83,11 +91,17 @@ public String getNombre() {
     return nombre;
 }
 
-
+public void setUsuarios(ArrayList<Usuario> usuarios) {
+    this.usuarios = usuarios;
+}
 
 
 public void setNombre(String nombre) {
     this.nombre = nombre;
+}
+
+public Set<String> getFavoritos() {
+    return favoritos;
 }
 
 
@@ -121,28 +135,24 @@ public void setSuscripcion(Suscripcion suscripcion) {
 
 
 
-public ArrayList<Contenido> getFavoritos() {
-    return favoritos;
-}
 
 
 
-
-public void setFavoritos(ArrayList<Contenido> favoritos) {
+public void setFavoritos(Set<String> favoritos) {
     this.favoritos = favoritos;
 }
 
 
 
 
-public ArrayList<Contenido> getEstoyViendo() {
+public Set<String> getEstoyViendo() {
     return estoyViendo;
 }
 
 
 
 
-public void setEstoyViendo(ArrayList<Contenido> estoyViendo) {
+public void setEstoyViendo(Set<String> estoyViendo) {
     this.estoyViendo = estoyViendo;
 }
 
@@ -212,21 +222,21 @@ for (Usuario usu : usuarios) {
 
 
 
-public void agreagarFavorito(Contenido c) throws ContenidoNoDisponibleException{
+public void agreagarFavorito(String nombre) throws ContenidoNoDisponibleException{
 
-    if(favoritos.contains(c)){
+    if(favoritos.contains(nombre)){
         throw new ContenidoNoDisponibleException("El contenido ya esta añadido a favoritos"); // Si se intenta insertyar una pelicula que ya estaba anteriormente añadida a favoritos lanzará la excepcion
     }else{
-    favoritos.add(c);
+    favoritos.add(nombre);
     }
 }
 
-public void eliminarFavorito(Contenido c) {
+public void eliminarFavorito(String c) {
     favoritos.remove(c);
 }
 
 
-public void agregarEstoyViendo(Contenido c){
+public void agregarEstoyViendo(String c){
 
     estoyViendo.add(c);
 }
@@ -234,7 +244,7 @@ public void agregarEstoyViendo(Contenido c){
 
 
 
-public void elimianrEstoyViendo(Contenido c){
+public void elimianrEstoyViendo(String c){
 
     estoyViendo.remove(c);
 }
@@ -249,8 +259,53 @@ public void cambiarSuscripcion(String tipo){
 
 
 
- 
+ public void guardarUsuariosEnArchivo(List<Usuario> usuarios, String rutaArchivo) throws IOException {
+    List<String> lineas = usuarios.stream()
+        .map(u -> {
+            String favoritos = String.join(",", u.getFavoritos());
+            String viendo = String.join(",", u.getEstoyViendo());
+            return u.getEmail() + "|" + favoritos + "|" + viendo;
+        })
+        .collect(Collectors.toList());
 
+    Path path = Paths.get(rutaArchivo);
+    Files.write(path, lineas);
+}
+
+
+
+
+
+
+public void cargarUsuariosDesdeArchivo(List<Usuario> usuarios, String rutaArchivo) throws IOException {
+    Path path = Paths.get(rutaArchivo);
+    if (!Files.exists(path)) return; // Si no existe el archivo, no hacer nada
+
+    List<String> lineas = Files.readAllLines(path);
+
+    for (String linea : lineas) {
+        String[] partes = linea.split("\\|");
+        if (partes.length >= 3) {
+            String email = partes[0];
+            String[] favoritosArray = partes[1].isEmpty() ? new String[0] : partes[1].split(",");
+            String[] viendoArray = partes[2].isEmpty() ? new String[0] : partes[2].split(",");
+
+            Usuario usuario = buscarUsuarioPorEmail(usuarios, email);
+            if (usuario != null) {
+                usuario.setFavoritos(new HashSet<>(List.of(favoritosArray)));
+                usuario.setEstoyViendo(new HashSet<>(List.of(viendoArray)));
+            }
+        }
+    }
+}
+
+// Método para buscar usuario en la lista por email
+public Usuario buscarUsuarioPorEmail(List<Usuario> usuarios, String email) {
+    for (Usuario u : usuarios) {
+        if (u.getEmail().equals(email)) return u;
+    }
+    return null;
+}
 
 
 }
