@@ -18,9 +18,9 @@ public class RegistroReproducciones {
     public void mostrarReproducciones() {
         for (Map.Entry<Usuario, Map<Contenido, Integer>> entry : registros.entrySet()) {
             Usuario usuario = entry.getKey();
-            System.out.println("👤 Usuario: " + usuario.getNombre());
+            System.out.println(" Usuario: " + usuario.getNombre());
             for (Map.Entry<Contenido, Integer> subEntry : entry.getValue().entrySet()) {
-                System.out.println("   ▶ " + subEntry.getKey().getTitulo() + ": " + subEntry.getValue() + " reproducciones");
+                System.out.println("    " + subEntry.getKey().getTitulo() + ": " + subEntry.getValue() + " reproducciones");
             }
         }
     }

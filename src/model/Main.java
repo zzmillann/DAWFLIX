@@ -121,9 +121,32 @@ gestorjuego.crearJuego("Call of Duty: Modern Warfare", "Shooter en primera perso
                             System.out.println(usuarioEncontrado);
                                 break;
                             case 5:
-                            String contenidos1 = JOptionPane.showInputDialog("Nombre de pelicula, serie o juego que quieras añadir a tu lista de favoritos");
-                            gestorusuario.agreagarFavorito(contenidos1);
-                            break;
+                            String emailFavorito = JOptionPane.showInputDialog("Email del usuario:");
+                             Usuario usuarioActual = gestorusuario.buscarUsuarioPorEmail(usuarios, emailFavorito);
+
+                             if (usuarioActual != null) {
+                                String contenidos1 = JOptionPane.showInputDialog("Nombre de película, serie o juego que quieras añadir a tu lista de favoritos");
+
+                             if (contenidos1 == null || contenidos1.trim().isEmpty()) {
+                                      JOptionPane.showMessageDialog(null, "El contenido no puede estar vacío.");
+                              } else {
+                            try {
+                              usuarioActual.agreagarFavorito(contenidos1);
+                               JOptionPane.showMessageDialog(null, "Contenido añadido a favoritos.");
+
+                                    // Guardar cambios en archivo
+                            gestorusuario.guardarUsuariosEnArchivo(usuarios, "usuarios.txt");
+
+                              } catch (ContenidoNoDisponibleException e) {
+                                   JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+                               } catch (IOException ioEx) {
+                                   JOptionPane.showMessageDialog(null, "Error al guardar en archivo: " + ioEx.getMessage());
+                                    }
+                             }  
+                              } else {
+                                  JOptionPane.showMessageDialog(null, "Usuario no encontrado.");
+                             }
+                              break;
                             case 6:
                             String contenidos2 = JOptionPane.showInputDialog("Nombre de pelicula, serie o juego que quieras eliminar a tu lista de favoritos");
                             gestorusuario.eliminarFavorito(contenidos2);
