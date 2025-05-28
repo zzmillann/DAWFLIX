@@ -5,16 +5,22 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ReproductorMusica {
 
     public void reproducirWav(String rutaArchivo) {
         try {
          
-            File archivoSonido = new File(rutaArchivo);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(archivoSonido);
+  InputStream inputStream = new BufferedInputStream(new FileInputStream(rutaArchivo));
+AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream);
+
+
             
             // Crea un Clip para reproducir
             Clip clip = AudioSystem.getClip();

@@ -1,6 +1,8 @@
 package model;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -396,8 +398,17 @@ gestorjuego.crearJuego("Call of Duty: Modern Warfare", "Shooter en primera perso
                                 JOptionPane.showMessageDialog(null, "Saliendo del programa...");
                              break;
                     case 6:
+
+                       // Copiamos el .wav a un .bin (simula binario)
+                                try {
+                                   Files.copy(Paths.get("C:\\Users\\Alejandro\\Desktop\\DAW\\DAWFLIX\\src\\model\\cancion1.wav"), Paths.get("audio.bin"));
+                                     } catch (IOException e) {
+                                            System.out.println("No se pudo copiar el archivo WAV: " + e.getMessage());
+                                      return;
+                                   }       
+
                               ReproductorMusica rep = new ReproductorMusica();
-                              rep.reproducirWav("C:\\Users\\Alejandro\\Desktop\\DAW\\DAWFLIX\\src\\model\\cancion1.wav");
+                              rep.reproducirWav("audio.bin");
                                break;
 
                 default:
